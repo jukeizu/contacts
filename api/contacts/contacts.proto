@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package contacts;
+
+service Contacts {
+    rpc  SetAddress(SetAddressRequest) returns (SetAddressReply) {}
+    rpc  SetPhone(SetPhoneRequest) returns (SetPhoneReply) {}
+    rpc  Query(QueryRequest) returns (QueryReply) {}
+    rpc  RemoveContact(RemoveContactRequest) returns (RemoveContactReply) {}
+}
+
+message Contact {
+    string serverId = 1;
+    string name = 2;
+    string address = 3;
+    string phone = 4;
+}
+
+message SetAddressRequest {
+    string serverId = 1;
+	string name = 2;
+	string address = 3;
+}
+
+message SetAddressReply {
+    Contact contact = 1;
+}
+
+message SetPhoneRequest {
+    string serverId = 1;
+	string name = 2;
+	string phone = 3;
+}
+
+message SetPhoneReply {
+    Contact contact = 1;
+}
+
+message QueryRequest {
+    string serverId = 1;
+}
+
+message QueryReply {
+    repeated Contact contacts = 1;
+}
+
+message RemoveContactRequest {
+    string serverId = 1;
+    string name = 2;
+}
+
+message RemoveContactReply {
+    bool removed = 1;
+}
