@@ -13,17 +13,19 @@ import (
 
 type SetAddress interface {
 	handler.Command
+	Start() error
 }
 
 type setAddress struct {
 	command *command
 	logger  log.Logger
+	config  handler.HandlerConfig
 }
 
-func (c *command) SetAddress() SetAddress {
+func (c *command) SetAddress(config handler.HandlerConfig) SetAddress {
 	logger := log.With(c.logger, "component", "command.contacts.setaddress")
 
-	return &setAddress{c, logger}
+	return &setAddress{c, logger, config}
 }
 
 func (c *setAddress) IsCommand(request handler.Request) (bool, error) {
@@ -53,4 +55,15 @@ func (c *setAddress) Handle(request handler.Request) (handler.Results, error) {
 	}
 
 	return handler.Results{result}, nil
+}
+
+func (c *setAddress) Start() error {
+	h, err := handler.NewCommandHandler(c.logger, c.config)
+	if err != nil {
+		return err
+	}
+
+	h.Start(c)
+
+	return nil
 }

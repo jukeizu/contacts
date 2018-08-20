@@ -7,15 +7,18 @@ import (
 )
 
 type Config struct {
-	Endpoint string
-	Handler  handler.HandlerConfig
+	Endpoint             string
+	QueryHandler         handler.HandlerConfig
+	SetAddressHandler    handler.HandlerConfig
+	SetPhoneHandler      handler.HandlerConfig
+	RemoveContactHandler handler.HandlerConfig
 }
 
 type Command interface {
-	Query() Query
-	SetAddress() SetAddress
-	SetPhone() SetPhone
-	RemoveContact() RemoveContact
+	Query(handler.HandlerConfig) Query
+	SetAddress(handler.HandlerConfig) SetAddress
+	SetPhone(handler.HandlerConfig) SetPhone
+	RemoveContact(handler.HandlerConfig) RemoveContact
 }
 
 type command struct {

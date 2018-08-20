@@ -11,17 +11,19 @@ import (
 
 type Query interface {
 	handler.Command
+	Start() error
 }
 
 type query struct {
 	command *command
 	logger  log.Logger
+	config  handler.HandlerConfig
 }
 
-func (c *command) Query() Query {
+func (c *command) Query(config handler.HandlerConfig) Query {
 	logger := log.With(c.logger, "component", "command.contacts.query")
 
-	return &query{c, logger}
+	return &query{c, logger, config}
 }
 
 func (c *query) IsCommand(request handler.Request) (bool, error) {
@@ -54,4 +56,15 @@ func (c *query) Handle(request handler.Request) (handler.Results, error) {
 	}
 
 	return handler.Results{result}, nil
+}
+
+func (c *query) Start() error {
+	h, err := handler.NewCommandHandler(c.logger, c.config)
+	if err != nil {
+		return err
+	}
+
+	h.Start(c)
+
+	return nil
 }

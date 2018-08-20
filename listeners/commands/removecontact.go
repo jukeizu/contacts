@@ -13,17 +13,19 @@ import (
 
 type RemoveContact interface {
 	handler.Command
+	Start() error
 }
 
 type removeContact struct {
 	command *command
 	logger  log.Logger
+	config  handler.HandlerConfig
 }
 
-func (c *command) RemoveContact() RemoveContact {
+func (c *command) RemoveContact(config handler.HandlerConfig) RemoveContact {
 	logger := log.With(c.logger, "component", "command.contacts.removecontact")
 
-	return &removeContact{c, logger}
+	return &removeContact{c, logger, config}
 }
 
 func (c *removeContact) IsCommand(request handler.Request) (bool, error) {
@@ -55,4 +57,15 @@ func (c *removeContact) Handle(request handler.Request) (handler.Results, error)
 	}
 
 	return handler.Results{result}, nil
+}
+
+func (c *removeContact) Start() error {
+	h, err := handler.NewCommandHandler(c.logger, c.config)
+	if err != nil {
+		return err
+	}
+
+	h.Start(c)
+
+	return nil
 }

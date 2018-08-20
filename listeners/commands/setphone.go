@@ -13,17 +13,19 @@ import (
 
 type SetPhone interface {
 	handler.Command
+	Start() error
 }
 
 type setPhone struct {
 	command *command
 	logger  log.Logger
+	config  handler.HandlerConfig
 }
 
-func (c *command) SetPhone() SetPhone {
+func (c *command) SetPhone(config handler.HandlerConfig) SetPhone {
 	logger := log.With(c.logger, "component", "command.contacts.setphone")
 
-	return &setPhone{c, logger}
+	return &setPhone{c, logger, config}
 }
 
 func (c *setPhone) IsCommand(request handler.Request) (bool, error) {
@@ -53,4 +55,15 @@ func (c *setPhone) Handle(request handler.Request) (handler.Results, error) {
 	}
 
 	return handler.Results{result}, nil
+}
+
+func (c *setPhone) Start() error {
+	h, err := handler.NewCommandHandler(c.logger, c.config)
+	if err != nil {
+		return err
+	}
+
+	h.Start(c)
+
+	return nil
 }
