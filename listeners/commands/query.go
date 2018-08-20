@@ -21,7 +21,7 @@ type query struct {
 }
 
 func (c *command) Query(config handler.HandlerConfig) Query {
-	logger := log.With(c.logger, "component", "command.contacts.query")
+	logger := log.With(c.logger, "command", "query")
 
 	return &query{c, logger, config}
 }

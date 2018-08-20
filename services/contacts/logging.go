@@ -24,6 +24,7 @@ func (s loggingService) SetAddress(ctx context.Context, req *pb.SetAddressReques
 			"method", "SetAddress",
 			"request", *req,
 			"reply", *reply,
+			"error", err,
 			"took", time.Since(begin),
 		)
 	}(time.Now())
@@ -39,6 +40,7 @@ func (s loggingService) SetPhone(ctx context.Context, req *pb.SetPhoneRequest) (
 			"method", "SetPhone",
 			"request", *req,
 			"reply", *reply,
+			"error", err,
 			"took", time.Since(begin),
 		)
 	}(time.Now())
@@ -48,16 +50,19 @@ func (s loggingService) SetPhone(ctx context.Context, req *pb.SetPhoneRequest) (
 	return
 }
 
-func (s loggingService) Query(ctx context.Context, req *pb.QueryRequest) (*pb.QueryReply, error) {
+func (s loggingService) Query(ctx context.Context, req *pb.QueryRequest) (reply *pb.QueryReply, err error) {
 	defer func(begin time.Time) {
 		s.logger.Log(
 			"method", "Query",
 			"request", *req,
+			"error", err,
 			"took", time.Since(begin),
 		)
 	}(time.Now())
 
-	return s.Service.Query(ctx, req)
+	reply, err = s.Service.Query(ctx, req)
+
+	return
 }
 
 func (s loggingService) RemoveContact(ctx context.Context, req *pb.RemoveContactRequest) (reply *pb.RemoveContactReply, err error) {
@@ -66,6 +71,7 @@ func (s loggingService) RemoveContact(ctx context.Context, req *pb.RemoveContact
 			"method", "RemoveContact",
 			"request", *req,
 			"reply", *reply,
+			"error", err,
 			"took", time.Since(begin),
 		)
 	}(time.Now())

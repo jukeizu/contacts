@@ -23,7 +23,7 @@ type setAddress struct {
 }
 
 func (c *command) SetAddress(config handler.HandlerConfig) SetAddress {
-	logger := log.With(c.logger, "component", "command.contacts.setaddress")
+	logger := log.With(c.logger, "command", "setaddress")
 
 	return &setAddress{c, logger, config}
 }

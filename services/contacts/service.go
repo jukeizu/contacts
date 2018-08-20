@@ -38,5 +38,5 @@ func (s service) RemoveContact(ctx context.Context, req *pb.RemoveContactRequest
 		return &pb.RemoveContactReply{Removed: false}, err
 	}
 
-	return &pb.RemoveContactReply{Removed: true}, err
+	return &pb.RemoveContactReply{Removed: true}, nil
 }

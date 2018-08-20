@@ -23,7 +23,7 @@ type setPhone struct {
 }
 
 func (c *command) SetPhone(config handler.HandlerConfig) SetPhone {
-	logger := log.With(c.logger, "component", "command.contacts.setphone")
+	logger := log.With(c.logger, "command", "setphone")
 
 	return &setPhone{c, logger, config}
 }

@@ -23,13 +23,13 @@ type removeContact struct {
 }
 
 func (c *command) RemoveContact(config handler.HandlerConfig) RemoveContact {
-	logger := log.With(c.logger, "component", "command.contacts.removecontact")
+	logger := log.With(c.logger, "command", "removecontact")
 
 	return &removeContact{c, logger, config}
 }
 
 func (c *removeContact) IsCommand(request handler.Request) (bool, error) {
-	return regexp.MatchString("!setphone '(.*?)' ([^\\s]*)", request.Content)
+	return regexp.MatchString("!removecontact '(.*?)'", request.Content)
 }
 
 func (c *removeContact) Handle(request handler.Request) (handler.Results, error) {
@@ -42,11 +42,11 @@ func (c *removeContact) Handle(request handler.Request) (handler.Results, error)
 		Name:     name,
 	}
 
-	reply, _ := c.command.Client.RemoveContact(context.Background(), &removeContactRequest)
+	reply, err := c.command.Client.RemoveContact(context.Background(), &removeContactRequest)
 
 	removeResponse := ""
 
-	if reply.Removed {
+	if err == nil && reply.Removed {
 		removeResponse = "removed"
 	} else {
 		removeResponse = "could not remove"
