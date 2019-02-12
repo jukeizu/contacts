@@ -32,7 +32,6 @@ func NewRepository(url string) (Repository, error) {
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		return nil, err
-
 	}
 
 	r := repository{
