@@ -48,6 +48,8 @@ func parseConfig() {
 }
 
 func main() {
+	parseConfig()
+
 	if flagVersion {
 		fmt.Println(Version)
 		os.Exit(0)
@@ -76,7 +78,21 @@ func main() {
 			},
 		))
 
-	contactsService := contacts.NewService(nil)
+	contactsRepository, err := contacts.NewRepository(dbUrl)
+	if err != nil {
+		logger.Error().Err(err).Caller().Msg("couldn't create contacts repository")
+		os.Exit(1)
+	}
+
+	if flagMigrate {
+		err := contactsRepository.Migrate()
+		if err != nil {
+			logger.Error().Err(err).Caller().Msg("couldn't migrate contacts repository")
+			os.Exit(1)
+		}
+	}
+
+	contactsService := contacts.NewService(contactsRepository)
 	contactspb.RegisterContactsServer(grpcServer, contactsService)
 
 	port := ":" + grpcPort

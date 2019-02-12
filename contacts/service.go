@@ -7,33 +7,33 @@ import (
 )
 
 type service struct {
-	ContactStorage ContactStorage
+	Repository Repository
 }
 
-func NewService(contactStorage ContactStorage) contactspb.ContactsServer {
+func NewService(contactStorage Repository) contactspb.ContactsServer {
 	return &service{contactStorage}
 }
 
 func (s service) SetAddress(ctx context.Context, req *contactspb.SetAddressRequest) (*contactspb.SetAddressReply, error) {
-	contact, err := s.ContactStorage.SetAddress(req)
+	contact, err := s.Repository.SetAddress(req)
 
 	return &contactspb.SetAddressReply{Contact: contact}, err
 }
 
 func (s service) SetPhone(ctx context.Context, req *contactspb.SetPhoneRequest) (*contactspb.SetPhoneReply, error) {
-	contact, err := s.ContactStorage.SetPhone(req)
+	contact, err := s.Repository.SetPhone(req)
 
 	return &contactspb.SetPhoneReply{Contact: contact}, err
 }
 
 func (s service) Query(ctx context.Context, req *contactspb.QueryRequest) (*contactspb.QueryReply, error) {
-	contacts, err := s.ContactStorage.Query(req)
+	contacts, err := s.Repository.Query(req)
 
 	return &contactspb.QueryReply{Contacts: contacts}, err
 }
 
 func (s service) RemoveContact(ctx context.Context, req *contactspb.RemoveContactRequest) (*contactspb.RemoveContactReply, error) {
-	err := s.ContactStorage.RemoveContact(req)
+	err := s.Repository.RemoveContact(req)
 	if err != nil {
 		return &contactspb.RemoveContactReply{Removed: false}, err
 	}
