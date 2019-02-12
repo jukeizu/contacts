@@ -93,6 +93,7 @@ func main() {
 	}
 
 	contactsService := contacts.NewService(contactsRepository)
+	contactsService = contacts.NewLoggingService(logger, contactsService)
 	contactspb.RegisterContactsServer(grpcServer, contactsService)
 
 	port := ":" + grpcPort

@@ -18,7 +18,7 @@ type Repository interface {
 	SetAddress(*contactspb.SetAddressRequest) (*contactspb.Contact, error)
 	SetPhone(*contactspb.SetPhoneRequest) (*contactspb.Contact, error)
 	Query(*contactspb.QueryRequest) ([]*contactspb.Contact, error)
-	RemoveContact(*contactspb.RemoveContactRequest) error
+	RemoveContact(*contactspb.RemoveContactRequest) (bool, error)
 	Migrate() error
 }
 
@@ -64,21 +64,88 @@ func (r *repository) Migrate() error {
 func (r *repository) SetAddress(req *contactspb.SetAddressRequest) (*contactspb.Contact, error) {
 	contact := &contactspb.Contact{}
 
-	return contact, nil
+	q := `INSERT INTO contact (serverid, name, address) 
+		VALUES($1, $2, $3) 
+		ON CONFLICT (serverid, name) DO UPDATE SET address = excluded.address, updated = NOW()
+		RETURNING serverid, name, address, phone`
+
+	err := r.Db.QueryRow(q,
+		req.ServerId,
+		req.Name,
+		req.Address,
+	).Scan(
+		&contact.ServerId,
+		&contact.Name,
+		&contact.Address,
+		&contact.Phone,
+	)
+
+	return contact, err
 }
 
 func (r *repository) SetPhone(req *contactspb.SetPhoneRequest) (*contactspb.Contact, error) {
 	contact := &contactspb.Contact{}
 
-	return contact, nil
+	q := `INSERT INTO contact (serverid, name, phone) 
+		VALUES($1, $2, $3) 
+		ON CONFLICT (serverid, name) DO UPDATE SET phone = excluded.phone, updated = NOW()
+		RETURNING serverid, name, address, phone`
+
+	err := r.Db.QueryRow(q,
+		req.ServerId,
+		req.Name,
+		req.Phone,
+	).Scan(
+		&contact.ServerId,
+		&contact.Name,
+		&contact.Address,
+		&contact.Phone,
+	)
+
+	return contact, err
 }
 
 func (r *repository) Query(query *contactspb.QueryRequest) ([]*contactspb.Contact, error) {
 	contacts := []*contactspb.Contact{}
 
+	q := `SELECT serverid, name, address, phone FROM contact WHERE serverid = $1`
+
+	rows, err := r.Db.Query(q, query.ServerId)
+	if err != nil {
+		return contacts, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		contact := contactspb.Contact{}
+		err := rows.Scan(
+			&contact.ServerId,
+			&contact.Name,
+			&contact.Address,
+			&contact.Phone,
+		)
+		if err != nil {
+			return contacts, err
+		}
+
+		contacts = append(contacts, &contact)
+	}
+
 	return contacts, nil
 }
 
-func (r *repository) RemoveContact(req *contactspb.RemoveContactRequest) error {
-	return nil
+func (r *repository) RemoveContact(req *contactspb.RemoveContactRequest) (bool, error) {
+	q := `DELETE FROM contact WHERE serverid = $1 AND name = $2`
+
+	result, err := r.Db.Exec(q, req.ServerId, req.Name)
+	if err != nil {
+		return false, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	return rowsAffected > 0, nil
 }

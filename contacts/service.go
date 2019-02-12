@@ -33,10 +33,7 @@ func (s service) Query(ctx context.Context, req *contactspb.QueryRequest) (*cont
 }
 
 func (s service) RemoveContact(ctx context.Context, req *contactspb.RemoveContactRequest) (*contactspb.RemoveContactReply, error) {
-	err := s.Repository.RemoveContact(req)
-	if err != nil {
-		return &contactspb.RemoveContactReply{Removed: false}, err
-	}
+	removed, err := s.Repository.RemoveContact(req)
 
-	return &contactspb.RemoveContactReply{Removed: true}, nil
+	return &contactspb.RemoveContactReply{Removed: removed}, err
 }
