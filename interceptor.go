@@ -9,24 +9,27 @@ import (
 )
 
 func LoggingInterceptor(logger zerolog.Logger) grpc.ServerOption {
-	interceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		defer func(begin time.Time) {
-			logger := logger.With().
-				Str("method", info.FullMethod).
-				Str("took", time.Since(begin).String()).
-				Logger()
+	return grpc.UnaryInterceptor(buildLoggingInterceptor(logger))
+}
 
-			if err != nil {
-				logger.Error().Err(err).Msg("")
-				return
-			}
+func buildLoggingInterceptor(logger zerolog.Logger) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		begin := time.Now()
 
-			logger.Info().Msg("called")
-		}(time.Now())
+		resp, err := handler(ctx, req)
 
-		resp, err = handler(ctx, req)
-		return
+		logger := logger.With().
+			Str("method", info.FullMethod).
+			Str("took", time.Since(begin).String()).
+			Logger()
+
+		if err != nil {
+			logger.Error().Err(err).Msg("")
+			return resp, err
+		}
+
+		logger.Info().Msg("called")
+
+		return resp, err
 	}
-
-	return grpc.UnaryInterceptor(interceptor)
 }
