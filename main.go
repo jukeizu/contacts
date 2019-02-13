@@ -23,23 +23,17 @@ import (
 
 var Version = ""
 
-const (
-	DefaultGrpcPort = "50051"
-)
-
 var (
-	flagServer  = false
 	flagMigrate = false
 	flagVersion = false
 
-	grpcPort = DefaultGrpcPort
+	grpcPort = "50051"
 	dbUrl    = "root@localhost:26257"
 )
 
 func parseConfig() {
 	flag.StringVar(&grpcPort, "grpc.port", grpcPort, "grpc port")
 	flag.StringVar(&dbUrl, "db", dbUrl, "Database connection url")
-	flag.BoolVar(&flagServer, "server", false, "Start as server")
 	flag.BoolVar(&flagMigrate, "migrate", false, "Run db migrations")
 	flag.BoolVar(&flagVersion, "v", false, "version")
 
