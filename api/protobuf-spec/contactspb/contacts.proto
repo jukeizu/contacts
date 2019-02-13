@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package contacts;
+package contactspb;
 
 service Contacts {
     rpc  SetAddress(SetAddressRequest) returns (SetAddressReply) {}
