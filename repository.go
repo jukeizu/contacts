@@ -1,11 +1,11 @@
-package contacts
+package main
 
 import (
 	"database/sql"
 	"fmt"
 
 	"github.com/jukeizu/contacts/api/protobuf-spec/contactspb"
-	migration "github.com/jukeizu/contacts/contacts/migrations"
+	migration "github.com/jukeizu/contacts/migrations"
 	_ "github.com/lib/pq"
 	"github.com/shawntoffel/gossage"
 )

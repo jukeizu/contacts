@@ -13,7 +13,6 @@ import (
 	"github.com/cheapRoc/grpc-zerolog"
 	_ "github.com/jnewmano/grpc-json-proxy/codec"
 	"github.com/jukeizu/contacts/api/protobuf-spec/contactspb"
-	"github.com/jukeizu/contacts/contacts"
 	"github.com/oklog/run"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
@@ -78,7 +77,7 @@ func main() {
 			},
 		))
 
-	contactsRepository, err := contacts.NewRepository(dbUrl)
+	contactsRepository, err := NewRepository(dbUrl)
 	if err != nil {
 		logger.Error().Err(err).Caller().Msg("couldn't create contacts repository")
 		os.Exit(1)
@@ -92,8 +91,8 @@ func main() {
 		}
 	}
 
-	contactsService := contacts.NewService(contactsRepository)
-	contactsService = contacts.NewLoggingService(logger, contactsService)
+	contactsService := NewService(contactsRepository)
+	contactsService = NewLoggingService(logger, contactsService)
 	contactspb.RegisterContactsServer(grpcServer, contactsService)
 
 	port := ":" + grpcPort

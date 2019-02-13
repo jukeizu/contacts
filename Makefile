@@ -17,10 +17,10 @@ test:
 	$(GO) test -v -race ./...
 
 build:
-	$(BUILD) -o bin/contacts-$(VERSION) ./cmd/...
+	$(BUILD) -o bin/contacts-$(VERSION)
 
 build-linux:
-	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/contacts ./cmd/...
+	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/contacts
 
 docker-build:
 	docker build -t $(REPO):$(VERSION) .
