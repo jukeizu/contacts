@@ -15,6 +15,7 @@ import (
 	"github.com/oklog/run"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
+	"github.com/shawntoffel/gossage"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
@@ -69,6 +70,11 @@ func main() {
 	}
 
 	if flagMigrate {
+		gossage.Logger = func(format string, a ...interface{}) {
+			msg := fmt.Sprintf(format, a...)
+			logger.Info().Str("component", "migrator").Msg(msg)
+		}
+
 		err := contactsRepository.Migrate()
 		if err != nil {
 			logger.Error().Err(err).Caller().Msg("couldn't migrate contacts repository")
