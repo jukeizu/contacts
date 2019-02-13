@@ -4,7 +4,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -63,20 +62,6 @@ func main() {
 	grpcLoggerV2 := grpczerolog.New(logger.With().Str("transport", "grpc").Logger())
 	grpclog.SetLoggerV2(grpcLoggerV2)
 
-	grpcServer := grpc.NewServer(
-		grpc.KeepaliveParams(
-			keepalive.ServerParameters{
-				Time:    5 * time.Minute,
-				Timeout: 10 * time.Second,
-			},
-		),
-		grpc.KeepaliveEnforcementPolicy(
-			keepalive.EnforcementPolicy{
-				MinTime:             5 * time.Second,
-				PermitWithoutStream: true,
-			},
-		))
-
 	contactsRepository, err := NewRepository(dbUrl)
 	if err != nil {
 		logger.Error().Err(err).Caller().Msg("couldn't create contacts repository")
@@ -91,28 +76,16 @@ func main() {
 		}
 	}
 
-	contactsService := NewService(contactsRepository)
-	contactsService = NewLoggingService(logger, contactsService)
-	contactspb.RegisterContactsServer(grpcServer, contactsService)
-
-	port := ":" + grpcPort
+	grpcServer := newGrpcServer(logger)
+	contactsServer := NewServer(logger, grpcServer, contactsRepository)
+	contactspb.RegisterContactsServer(grpcServer, contactsServer)
 
 	g := run.Group{}
 
 	g.Add(func() error {
-		logger.Info().
-			Str("transport", "grpc").
-			Str("addr", port).
-			Msg("listening")
-		listener, err := net.Listen("tcp", port)
-		if err != nil {
-			logger.Error().Err(err).Caller().Msg("couldn't listener")
-			return err
-		}
-
-		return grpcServer.Serve(listener)
+		return contactsServer.Start(":" + grpcPort)
 	}, func(error) {
-		grpcServer.GracefulStop()
+		contactsServer.Stop()
 	})
 
 	cancel := make(chan struct{})
@@ -135,4 +108,24 @@ func interrupt(cancel <-chan struct{}) error {
 	case sig := <-c:
 		return fmt.Errorf("%s", sig)
 	}
+}
+
+func newGrpcServer(logger zerolog.Logger) *grpc.Server {
+	grpcServer := grpc.NewServer(
+		grpc.KeepaliveParams(
+			keepalive.ServerParameters{
+				Time:    5 * time.Minute,
+				Timeout: 10 * time.Second,
+			},
+		),
+		grpc.KeepaliveEnforcementPolicy(
+			keepalive.EnforcementPolicy{
+				MinTime:             5 * time.Second,
+				PermitWithoutStream: true,
+			},
+		),
+		LoggingInterceptor(logger),
+	)
+
+	return grpcServer
 }
