@@ -40,7 +40,7 @@ func parseConfig() {
 	flag.StringVar(&grpcPort, "grpc.port", grpcPort, "grpc port for server")
 	flag.StringVar(&httpPort, "http.port", httpPort, "http port for handler")
 	flag.StringVar(&dbUrl, "db", dbUrl, "Database connection url")
-	flag.StringVar(&dbUrl, "service.addr", serviceAddress, "address of service if not local")
+	flag.StringVar(&serviceAddress, "service.addr", serviceAddress, "address of service if not local")
 	flag.BoolVar(&flagServer, "server", false, "Run as server")
 	flag.BoolVar(&flagHandler, "handler", false, "Run as handler")
 	flag.BoolVar(&flagMigrate, "migrate", false, "Run db migrations")
@@ -126,9 +126,8 @@ func main() {
 		}
 
 		client := contactspb.NewContactsClient(clientConn)
+		handler := treediagram.NewHandler(logger, client, ":"+httpPort)
 
-		handler := treediagram.NewHandler(client, ":"+httpPort)
-		handler = treediagram.NewHandlerLogger(handler, logger)
 		g.Add(func() error {
 			return handler.Start()
 		}, func(error) {

@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/jukeizu/contacts/api/protobuf-spec/contactspb"
 	"github.com/jukeizu/contract"
+	"github.com/rs/zerolog"
 )
 
 type Handler interface {
@@ -21,15 +23,19 @@ type Handler interface {
 }
 
 type handler struct {
+	logger     zerolog.Logger
 	client     contactspb.ContactsClient
 	httpServer *http.Server
 }
 
-func NewHandler(client contactspb.ContactsClient, addr string) Handler {
+func NewHandler(logger zerolog.Logger, client contactspb.ContactsClient, addr string) Handler {
+	logger = logger.With().Str("component", "handler").Logger()
+
 	httpServer := http.Server{
 		Addr: addr,
 	}
-	return &handler{client, &httpServer}
+
+	return &handler{logger, client, &httpServer}
 }
 
 func (h *handler) SetAddress(request contract.Request) (*contract.Response, error) {
@@ -135,11 +141,13 @@ func (h *handler) RemoveContact(request contract.Request) (*contract.Response, e
 }
 
 func (h *handler) Start() error {
+	h.logger.Info().Msg("starting")
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/setaddress", contract.MakeHttpHandlerFunc(h.SetAddress))
-	mux.HandleFunc("/setphone", contract.MakeHttpHandlerFunc(h.SetPhone))
-	mux.HandleFunc("/query", contract.MakeHttpHandlerFunc(h.Query))
-	mux.HandleFunc("/removecontact", contract.MakeHttpHandlerFunc(h.RemoveContact))
+	mux.HandleFunc("/setaddress", h.makeLoggingHttpHandlerFunc("setaddress", h.SetAddress))
+	mux.HandleFunc("/setphone", h.makeLoggingHttpHandlerFunc("setname", h.SetPhone))
+	mux.HandleFunc("/query", h.makeLoggingHttpHandlerFunc("query", h.Query))
+	mux.HandleFunc("/removecontact", h.makeLoggingHttpHandlerFunc("removecontact", h.RemoveContact))
 
 	h.httpServer.Handler = mux
 
@@ -147,7 +155,24 @@ func (h *handler) Start() error {
 }
 
 func (h *handler) Stop() error {
+	h.logger.Info().Msg("stopping")
+
 	return h.httpServer.Shutdown(context.Background())
+}
+
+func (h *handler) makeLoggingHttpHandlerFunc(name string, f func(contract.Request) (*contract.Response, error)) http.HandlerFunc {
+	contractHandlerFunc := contract.MakeHttpHandlerFunc(f)
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer func(begin time.Time) {
+			h.logger.Info().
+				Str("intent", name).
+				Str("took", time.Since(begin).String()).
+				Msg("called")
+		}(time.Now())
+
+		contractHandlerFunc.ServeHTTP(w, r)
+	}
 }
 
 func parseNameValue(command string, content string) (string, string) {
