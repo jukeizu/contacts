@@ -145,7 +145,7 @@ func (h *handler) Start() error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/setaddress", h.makeLoggingHttpHandlerFunc("setaddress", h.SetAddress))
-	mux.HandleFunc("/setphone", h.makeLoggingHttpHandlerFunc("setname", h.SetPhone))
+	mux.HandleFunc("/setphone", h.makeLoggingHttpHandlerFunc("setphone", h.SetPhone))
 	mux.HandleFunc("/query", h.makeLoggingHttpHandlerFunc("query", h.Query))
 	mux.HandleFunc("/removecontact", h.makeLoggingHttpHandlerFunc("removecontact", h.RemoveContact))
 
