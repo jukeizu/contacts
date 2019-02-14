@@ -103,8 +103,10 @@ func main() {
 		contactsServer := NewServer(logger, grpcServer, contactsRepository)
 		contactspb.RegisterContactsServer(grpcServer, contactsServer)
 
+		grpcAddr := ":" + grpcPort
+
 		g.Add(func() error {
-			return contactsServer.Start(":" + grpcPort)
+			return contactsServer.Start(grpcAddr)
 		}, func(error) {
 			contactsServer.Stop()
 		})
@@ -126,7 +128,9 @@ func main() {
 		}
 
 		client := contactspb.NewContactsClient(clientConn)
-		handler := treediagram.NewHandler(logger, client, ":"+httpPort)
+
+		httpAddr := ":" + httpPort
+		handler := treediagram.NewHandler(logger, client, httpAddr)
 
 		g.Add(func() error {
 			return handler.Start()
@@ -150,7 +154,7 @@ func main() {
 
 func interrupt(cancel <-chan struct{}) error {
 	c := make(chan os.Signal)
-	signal.Notify(c, syscall.SIGINT)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
 	select {
 	case <-cancel:
