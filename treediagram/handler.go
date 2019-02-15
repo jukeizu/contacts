@@ -29,7 +29,7 @@ type handler struct {
 }
 
 func NewHandler(logger zerolog.Logger, client contactspb.ContactsClient, addr string) Handler {
-	logger = logger.With().Str("component", "handler").Logger()
+	logger = logger.With().Str("component", "intent.endpoint.contacts").Logger()
 
 	httpServer := http.Server{
 		Addr: addr,
