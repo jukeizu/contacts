@@ -107,7 +107,7 @@ func (r *repository) SetPhone(req *contactspb.SetPhoneRequest) (*contactspb.Cont
 func (r *repository) Query(query *contactspb.QueryRequest) ([]*contactspb.Contact, error) {
 	contacts := []*contactspb.Contact{}
 
-	q := `SELECT serverid, name, address, phone FROM contact WHERE serverid = $1`
+	q := `SELECT serverid, name, address, phone FROM contact WHERE serverid = $1 ORDER BY LOWER(name) ASC`
 
 	rows, err := r.Db.Query(q, query.ServerId)
 	if err != nil {
