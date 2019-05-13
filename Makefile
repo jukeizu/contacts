@@ -18,10 +18,10 @@ test:
 	$(GO) test -v -race ./...
 
 build:
-	$(BUILD) -o bin/$(NAME)-$(VERSION) 
+	$(BUILD) -o bin/$(NAME)-$(VERSION) ./cmd/...
 
 build-linux:
-	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/$(NAME) 
+	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/$(NAME) ./cmd/...
 
 docker-build:
 	docker build -t $(REPO):$(VERSION) .

@@ -1,11 +1,11 @@
-package main
+package contacts
 
 import (
 	"database/sql"
 	"fmt"
 
 	"github.com/jukeizu/contacts/api/protobuf-spec/contactspb"
-	migration "github.com/jukeizu/contacts/migrations"
+	"github.com/jukeizu/contacts/pkg/contacts/migrations"
 	_ "github.com/lib/pq"
 	"github.com/shawntoffel/gossage"
 )
@@ -52,7 +52,7 @@ func (r *repository) Migrate() error {
 		return err
 	}
 
-	err = g.RegisterMigrations(migration.CreateTableContact20190212052552{})
+	err = g.RegisterMigrations(migrations.CreateTableContact20190212052552{})
 	if err != nil {
 		return err
 	}
