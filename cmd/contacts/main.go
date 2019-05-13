@@ -9,10 +9,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cheapRoc/grpc-zerolog"
+	grpczerolog "github.com/cheapRoc/grpc-zerolog"
 	_ "github.com/jnewmano/grpc-json-proxy/codec"
 	"github.com/jukeizu/contacts/api/protobuf-spec/contactspb"
-	"github.com/jukeizu/contacts/treediagram"
+	"github.com/jukeizu/contacts/internal/startup"
+	"github.com/jukeizu/contacts/pkg/contacts"
+	"github.com/jukeizu/contacts/pkg/treediagram"
 	"github.com/oklog/run"
 	"github.com/rs/xid"
 	"github.com/rs/zerolog"
@@ -72,7 +74,7 @@ func main() {
 	}
 
 	if flagMigrate {
-		contactsRepository, err := NewRepository(dbUrl)
+		contactsRepository, err := contacts.NewRepository(dbUrl)
 		if err != nil {
 			logger.Error().Err(err).Caller().Msg("couldn't create contacts repository")
 			os.Exit(1)
@@ -93,14 +95,14 @@ func main() {
 	g := run.Group{}
 
 	if flagServer {
-		contactsRepository, err := NewRepository(dbUrl)
+		contactsRepository, err := contacts.NewRepository(dbUrl)
 		if err != nil {
 			logger.Error().Err(err).Caller().Msg("couldn't create contacts repository")
 			os.Exit(1)
 		}
 
 		grpcServer := newGrpcServer(logger)
-		contactsServer := NewServer(logger, grpcServer, contactsRepository)
+		contactsServer := contacts.NewServer(logger, grpcServer, contactsRepository)
 		contactspb.RegisterContactsServer(grpcServer, contactsServer)
 
 		grpcAddr := ":" + grpcPort
@@ -178,7 +180,7 @@ func newGrpcServer(logger zerolog.Logger) *grpc.Server {
 				PermitWithoutStream: true,
 			},
 		),
-		LoggingInterceptor(logger),
+		startup.LoggingInterceptor(logger),
 	)
 
 	return grpcServer
