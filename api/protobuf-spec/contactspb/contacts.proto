@@ -18,8 +18,8 @@ message Contact {
 
 message SetAddressRequest {
     string serverId = 1;
-	string name = 2;
-	string address = 3;
+    string name = 2;
+    string address = 3;
 }
 
 message SetAddressReply {
@@ -28,8 +28,8 @@ message SetAddressReply {
 
 message SetPhoneRequest {
     string serverId = 1;
-	string name = 2;
-	string phone = 3;
+    string name = 2;
+    string phone = 3;
 }
 
 message SetPhoneReply {

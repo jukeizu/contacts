@@ -37,7 +37,7 @@ func (m *Contact) Reset()         { *m = Contact{} }
 func (m *Contact) String() string { return proto.CompactTextString(m) }
 func (*Contact) ProtoMessage()    {}
 func (*Contact) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{0}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{0}
 }
 func (m *Contact) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Contact.Unmarshal(m, b)
@@ -98,7 +98,7 @@ func (m *SetAddressRequest) Reset()         { *m = SetAddressRequest{} }
 func (m *SetAddressRequest) String() string { return proto.CompactTextString(m) }
 func (*SetAddressRequest) ProtoMessage()    {}
 func (*SetAddressRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{1}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{1}
 }
 func (m *SetAddressRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetAddressRequest.Unmarshal(m, b)
@@ -150,7 +150,7 @@ func (m *SetAddressReply) Reset()         { *m = SetAddressReply{} }
 func (m *SetAddressReply) String() string { return proto.CompactTextString(m) }
 func (*SetAddressReply) ProtoMessage()    {}
 func (*SetAddressReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{2}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{2}
 }
 func (m *SetAddressReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetAddressReply.Unmarshal(m, b)
@@ -190,7 +190,7 @@ func (m *SetPhoneRequest) Reset()         { *m = SetPhoneRequest{} }
 func (m *SetPhoneRequest) String() string { return proto.CompactTextString(m) }
 func (*SetPhoneRequest) ProtoMessage()    {}
 func (*SetPhoneRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{3}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{3}
 }
 func (m *SetPhoneRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetPhoneRequest.Unmarshal(m, b)
@@ -242,7 +242,7 @@ func (m *SetPhoneReply) Reset()         { *m = SetPhoneReply{} }
 func (m *SetPhoneReply) String() string { return proto.CompactTextString(m) }
 func (*SetPhoneReply) ProtoMessage()    {}
 func (*SetPhoneReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{4}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{4}
 }
 func (m *SetPhoneReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SetPhoneReply.Unmarshal(m, b)
@@ -280,7 +280,7 @@ func (m *QueryRequest) Reset()         { *m = QueryRequest{} }
 func (m *QueryRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryRequest) ProtoMessage()    {}
 func (*QueryRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{5}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{5}
 }
 func (m *QueryRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_QueryRequest.Unmarshal(m, b)
@@ -318,7 +318,7 @@ func (m *QueryReply) Reset()         { *m = QueryReply{} }
 func (m *QueryReply) String() string { return proto.CompactTextString(m) }
 func (*QueryReply) ProtoMessage()    {}
 func (*QueryReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{6}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{6}
 }
 func (m *QueryReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_QueryReply.Unmarshal(m, b)
@@ -357,7 +357,7 @@ func (m *RemoveContactRequest) Reset()         { *m = RemoveContactRequest{} }
 func (m *RemoveContactRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveContactRequest) ProtoMessage()    {}
 func (*RemoveContactRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{7}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{7}
 }
 func (m *RemoveContactRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveContactRequest.Unmarshal(m, b)
@@ -402,7 +402,7 @@ func (m *RemoveContactReply) Reset()         { *m = RemoveContactReply{} }
 func (m *RemoveContactReply) String() string { return proto.CompactTextString(m) }
 func (*RemoveContactReply) ProtoMessage()    {}
 func (*RemoveContactReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_contacts_59cc4e64dac64b18, []int{8}
+	return fileDescriptor_contacts_06801c895e1ebac2, []int{8}
 }
 func (m *RemoveContactReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveContactReply.Unmarshal(m, b)
@@ -612,9 +612,9 @@ var _Contacts_serviceDesc = grpc.ServiceDesc{
 	Metadata: "contacts.proto",
 }
 
-func init() { proto.RegisterFile("contacts.proto", fileDescriptor_contacts_59cc4e64dac64b18) }
+func init() { proto.RegisterFile("contacts.proto", fileDescriptor_contacts_06801c895e1ebac2) }
 
-var fileDescriptor_contacts_59cc4e64dac64b18 = []byte{
+var fileDescriptor_contacts_06801c895e1ebac2 = []byte{
 	// 339 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0x4f, 0x4b, 0xfb, 0x40,
 	0x10, 0xfd, 0xf5, 0xdf, 0x2f, 0xf1, 0x69, 0x15, 0xc7, 0x22, 0x6b, 0x44, 0x29, 0x7b, 0x12, 0xc1,
