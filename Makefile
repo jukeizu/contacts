@@ -1,12 +1,13 @@
-TAG=$(shell git describe --tags)
+TAG=$(shell git describe --tags --always)
 VERSION=$(TAG:v%=%)
-REPO=jukeizu/contacts
+NAME=contacts
+REPO=jukeizu/$(NAME)
 GO=GO111MODULE=on go
 BUILD=GOARCH=amd64 $(GO) build -ldflags="-s -w -X main.Version=$(VERSION)" 
 PROTOFILES=$(wildcard api/protobuf-spec/*/*.proto)
 PBFILES=$(patsubst %.proto,%.pb.go, $(PROTOFILES))
 
-.PHONY: all deps test proto build clean $(PROTOFILES)
+.PHONY: all deps test build build-linux docker-build docker-save docker-deploy proto clean $(PROTOFILES)
 
 all: deps test build 
 deps:
@@ -17,13 +18,16 @@ test:
 	$(GO) test -v -race ./...
 
 build:
-	$(BUILD) -o bin/contacts-$(VERSION)
+	$(BUILD) -o bin/$(NAME)-$(VERSION) 
 
 build-linux:
-	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/contacts
+	CGO_ENABLED=0 GOOS=linux $(BUILD) -a -installsuffix cgo -o bin/$(NAME) 
 
 docker-build:
 	docker build -t $(REPO):$(VERSION) .
+
+docker-save:
+	mkdir -p bin && docker save -o bin/image.tar $(REPO):$(VERSION)
 
 docker-deploy:
 	docker push $(REPO):$(VERSION)
