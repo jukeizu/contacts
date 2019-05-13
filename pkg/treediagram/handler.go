@@ -161,7 +161,7 @@ func (h *handler) Stop() error {
 }
 
 func (h *handler) makeLoggingHttpHandlerFunc(name string, f func(contract.Request) (*contract.Response, error)) http.HandlerFunc {
-	contractHandlerFunc := contract.MakeHttpHandlerFunc(f)
+	contractHandlerFunc := contract.MakeRequestHttpHandlerFunc(f)
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer func(begin time.Time) {
